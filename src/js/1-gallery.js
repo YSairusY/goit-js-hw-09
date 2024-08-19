@@ -1,5 +1,7 @@
-import SimpleLightbox from 'simplelightbox';
 
+// Описаний в документації
+import SimpleLightbox from 'simplelightbox';
+// Додатковий імпорт стилів
 import 'simplelightbox/dist/simple-lightbox.min.css';
 
 const images = [
@@ -68,36 +70,31 @@ const images = [
   },
 ];
 
-const galleryList = document.querySelector('.gallery');
-const createGalleryCard = image => {
+const imagesGalleryEl = document.querySelector('.gallery');
+
+const createImageCardTemplate = image => {
   return `<li class="gallery-item">
-        <a class="gallery-link" href= ${image.original}>
-            <img
-                class="gallery-image"
-                src = ${image.preview}
-                data-source = ${image.original}
-                alt = ${image.description}
-            />
-        </a>
-    </li>`;
+    <a class="gallery-link" href="${image.original}">
+      <img
+        class="gallery-image"
+        src="${image.preview}"
+        alt="${image.description}"
+      />
+    </a>
+  </li>
+  `;
 };
 
-const createGalleryImages = images
-  .map(imageInfo => createGalleryCard(imageInfo))
+const imageCardsTemplate = images
+  .map(image => createImageCardTemplate(image))
   .join('');
-galleryList.innerHTML = createGalleryImages;
 
-galleryList.addEventListener('click', modalOpen);
+imagesGalleryEl.innerHTML = imageCardsTemplate;
 
-function modalOpen(event) {
-  if (event.target === event.currentTarget) {
-    return;
-    
-  } else if (event.target.nodeName === 'IMG') {
-    event.preventDefault();
-  }
-  const modal = basicLightbox.create(
-    `<img class="gallery-image" src=${event.target.dataset.source} width="1112" height="640"/>`
-  );
-  modal.show();
-}
+new SimpleLightbox('.gallery a', {
+  captions: true,
+  captionsData: 'alt',
+  captionDelay: 250,
+  overlayOpacity: 0.8,
+  captionsPosition: 'bottom',
+});
