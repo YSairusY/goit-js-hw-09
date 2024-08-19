@@ -68,36 +68,29 @@ const images = [
   },
 ];
 
-const galleryList = document.querySelector('.gallery');
-const createGalleryCard = image => {
-  return `<li class="gallery-item">
-        <a class="gallery-link" href= ${image.original}>
-            <img
-                class="gallery-image"
-                src = ${image.preview}
-                data-source = ${image.original}
-                alt = ${image.description}
-            />
+const galleryMarkup = document.querySelector('.gallery');
+galleryMarkup.insertAdjacentHTML('beforeend', createMarkup(images));
+
+function createMarkup(arr) {
+  return arr
+    .map(
+      ({ preview, original, description }) => `
+      <li class="gallery-item">
+        <a class="gallery-link" href="${original}">
+          <img
+            class="gallery-image"
+            src="${preview}"
+            alt="${description}"
+          />
         </a>
-    </li>`;
-};
-
-const createGalleryImages = images
-  .map(imageInfo => createGalleryCard(imageInfo))
-  .join('');
-galleryList.innerHTML = createGalleryImages;
-
-galleryList.addEventListener('click', modalOpen);
-
-function modalOpen(event) {
-  if (event.target === event.currentTarget) {
-    return;
-    
-  } else if (event.target.nodeName === 'IMG') {
-    event.preventDefault();
-  }
-  const modal = basicLightbox.create(
-    `<img class="gallery-image" src=${event.target.dataset.source} width="1112" height="640"/>`
-  );
-  modal.show();
+      </li>
+  `
+    )
+    .join('');
 }
+
+const gallery = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionDelay: 250,
+  overlayOpacity: 0.8,
+});
