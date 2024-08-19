@@ -1,7 +1,3 @@
-import SimpleLightbox from 'simplelightbox';
-
-import 'simplelightbox/dist/simple-lightbox.min.css';
-
 const images = [
   {
     preview:
@@ -35,7 +31,7 @@ const images = [
     preview:
       'https://cdn.pixabay.com/photo/2018/09/13/10/36/mountains-3674334__340.jpg',
     original:
-      'https://cdn.pixabay.com/photo/2018/09/13/10/36/mounta  ins-3674334_1280.jpg',
+      'https://cdn.pixabay.com/photo/2018/09/13/10/36/mountains-3674334_1280.jpg',
     description: 'Alpine Mountains',
   },
   {
@@ -68,29 +64,36 @@ const images = [
   },
 ];
 
-const galleryMarkup = document.querySelector('.gallery');
-galleryMarkup.insertAdjacentHTML('beforeend', createMarkup(images));
-
-function createMarkup(arr) {
-  return arr
-    .map(
-      ({ preview, original, description }) => `
-      <li class="gallery-item">
-        <a class="gallery-link" href="${original}">
-          <img
-            class="gallery-image"
-            src="${preview}"
-            alt="${description}"
-          />
+const galleryList = document.querySelector('.gallery');
+const createGalleryCard = image => {
+  return `<li class="gallery-item">
+        <a class="gallery-link" href= ${image.original}>
+            <img
+                class="gallery-image"
+                src = ${image.preview}
+                data-source = ${image.original}
+                alt = ${image.description}
+            />
         </a>
-      </li>
-  `
-    )
-    .join('');
-}
+    </li>`;
+};
 
-const gallery = new SimpleLightbox('.gallery a', {
-  captionsData: 'alt',
-  captionDelay: 250,
-  overlayOpacity: 0.8,
-});
+const createGalleryImages = images
+  .map(imageInfo => createGalleryCard(imageInfo))
+  .join('');
+galleryList.innerHTML = createGalleryImages;
+
+galleryList.addEventListener('click', modalOpen);
+
+function modalOpen(event) {
+  if (event.target === event.currentTarget) {
+    return;
+    
+  } else if (event.target.nodeName === 'IMG') {
+    event.preventDefault();
+  }
+  const modal = basicLightbox.create(
+    `<img class="gallery-image" src=${event.target.dataset.source} width="1112" height="640"/>`
+  );
+  modal.show();
+}
